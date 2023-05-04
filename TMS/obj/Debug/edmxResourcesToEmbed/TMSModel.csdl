@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="DBTMSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="TB_Users">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="TB_Tasks" Relationship="DBTMSModel.FK_TB_Tasks_TB_Users" FromRole="TB_Users" ToRole="TB_Tasks" />
+  </EntityType>
+  <EntityContainer Name="DBTMSEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <EntitySet Name="TB_Users" EntityType="Self.TB_Users" />
+    <EntitySet Name="TB_Projects" EntityType="DBTMSModel.TB_Projects" />
+    <EntitySet Name="TB_Tasks" EntityType="DBTMSModel.TB_Tasks" />
+    <AssociationSet Name="FK_TB_Tasks_TB_Projects" Association="DBTMSModel.FK_TB_Tasks_TB_Projects">
+      <End Role="TB_Projects" EntitySet="TB_Projects" />
+      <End Role="TB_Tasks" EntitySet="TB_Tasks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TB_Tasks_TB_Users" Association="DBTMSModel.FK_TB_Tasks_TB_Users">
+      <End Role="TB_Users" EntitySet="TB_Users" />
+      <End Role="TB_Tasks" EntitySet="TB_Tasks" />
+    </AssociationSet>
+    <EntitySet Name="TB_Note" EntityType="DBTMSModel.TB_Note" />
+  </EntityContainer>
+  <EntityType Name="TB_Projects">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="projectName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="projectDes" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="TB_Tasks" Relationship="DBTMSModel.FK_TB_Tasks_TB_Projects" FromRole="TB_Projects" ToRole="TB_Tasks" />
+  </EntityType>
+  <EntityType Name="TB_Tasks">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ID_Project" Type="Int32" />
+    <Property Name="ID_User" Type="Int32" />
+    <Property Name="Task_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Task_Des" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Task_User" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Task_Admin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Task_Project" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Task_Start" Type="DateTime" Precision="0" />
+    <Property Name="Task_End" Type="DateTime" Precision="0" />
+    <Property Name="Task_Duration" Type="Int32" />
+    <Property Name="Task_State" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="TB_Projects" Relationship="DBTMSModel.FK_TB_Tasks_TB_Projects" FromRole="TB_Tasks" ToRole="TB_Projects" />
+    <NavigationProperty Name="TB_Users" Relationship="DBTMSModel.FK_TB_Tasks_TB_Users" FromRole="TB_Tasks" ToRole="TB_Users" />
+  </EntityType>
+  <Association Name="FK_TB_Tasks_TB_Projects">
+    <End Type="DBTMSModel.TB_Projects" Role="TB_Projects" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Type="DBTMSModel.TB_Tasks" Role="TB_Tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TB_Projects">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="TB_Tasks">
+        <PropertyRef Name="ID_Project" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TB_Tasks_TB_Users">
+    <End Type="DBTMSModel.TB_Users" Role="TB_Users" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Type="DBTMSModel.TB_Tasks" Role="TB_Tasks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TB_Users">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="TB_Tasks">
+        <PropertyRef Name="ID_User" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="TB_Note">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NoteDes" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="NoteManger" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="NoteUser" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+</Schema>
